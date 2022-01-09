@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>서경대 학생 게시판</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+    <h2>자유게시판</h2>
+    <table class="board_list">
+        <colgroup>
+            <col width="15%" />
+            <col width="*" />
+            <col width="15%" />
+            <col width="20%" />
+        </colgroup>
+        <thead>
+        <tr>
+            <th scope="col">글번호</th>
+            <th scope="col">제목</th>
+            <th scope="col">조회수</th>
+            <th scope="col">작성일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.size(resultList)} > 0" th:each="boardDto : ${resultList}" >
+            <td th:text="${boardDto.board_idx}"></td>
+<!--            <td th:text="${boardDto.title}"></td>-->
+            <td class="title">
+                <a href="/board/openBoardDetail.do?boardIdx=" th:attrappend="href=${boardDto.board_idx}" th:text="${boardDto.title}"/>
+            </td>
+            <td th:text="${boardDto.hit_cnt}"></td>
+            <td th:text="${boardDto.created_datetime}"></td>
+        </tr>
+        <tr th:unless="${#lists.size(resultList)} > 0">
+            <td colspan="4">조회 결과가 없습니다.</td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/board/openBoardWrite.do" class="btn">글쓰기</a>
+</div>
+</body>
+</html>

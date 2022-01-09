@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    Mapper 인터페이스와 XML의 쿼리를 매칭해서 사용하려면
+    Mapper 인터페이스의 경로와       "board.mapper.BoardMapper"
+    메소드 이름이                   "selectBoardList"
+    XML 문서의 namespace 와 id 와 일치해야 함
+-->
+<mapper namespace="board.mapper.BoardMapper">
+
+    <!-- t_board 테이블의 정보를 읽어서 반환 -->
+    <select id="selectBoardList" resultType="board.dto.BoardDto">
+	<![CDATA[
+        select board_idx, title, hit_cnt, date_format(created_datetime, '%Y.%m.%d %H:%i:%s') as created_datetime
+        from t_board
+        where deleted_yn = 'N'
+        order by board_idx desc
+        ]]>
+	</select>
+
+    <insert id="insertBoard" parameterType="board.dto.BoardDto">
+	<![CDATA[
+        insert into t_board (title, contents, created_datetime, creator_id)
+        values (#{title}, #{contents}, now(), 'tester');
+        ]]>
+	</insert>
+
+	<!-- 게시판 상세 보기 쿼리 -->
+	<select id="selectBoardDetail" parameterType="int" resultType="board.dto.BoardDto">
+	<![CDATA[
+		select board_idx, title, hit_cnt, contents,
+			   date_format(created_datetime, '%Y.%m.%d %H:%i:%s') as created_datetime,
+			   creator_id
+		from t_board
+		where deleted_yn = 'N'
+		  and board_idx = #{boardIdx}
+		]]>
+	</select>
+
+	<!--카운트 증가 시키는 쿼리-->
+	<update id="updateHitCount" parameterType="int">
+		<![CDATA[
+			update t_board set hit_cnt = hit_cnt + 1 where board_idx = #{boardIdx}
+		]]>
+	</update>
+</mapper>
